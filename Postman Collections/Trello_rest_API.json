@@ -1,0 +1,203 @@
+{
+	"info": {
+		"_postman_id": "4a9a108e-a763-4e6e-bd32-c4ec9b434385",
+		"name": "Trello REST API tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create a board",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8b78ba51-d381-44c6-a999-ee233ce76b10",
+						"exec": [
+							"let resBody;\r",
+							"\r",
+							"pm.test(\"Verify status code\", ()=>{\r",
+							"    resBody = pm.response.json();\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200,201])\r",
+							"    pm.expect(pm.response.code).to.be.a(\"number\")\r",
+							"    pm.expect(pm.response.status).to.be.a(\"string\")\r",
+							"    pm.expect(pm.response.status).eql(\"OK\")\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Veify if response time is less than 300ms\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.lessThan(300)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Verify if name is longer than 3 letters\", ()=>{\r",
+							"    pm.expect(resBody.name.length).to.greaterThan(3)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Verify if response name = name set in collection\", ()=>{\r",
+							"    pm.expect(resBody.name).to.eql(pm.collectionVariables.get(\"boardName\"));\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Verify Content-Type content\", ()=> {\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).eql(\"application/json; charset=utf-8\")\r",
+							"    \r",
+							"})\r",
+							"\r",
+							"pm.test(\"Verify if name is a string\", ()=>{\r",
+							"    pm.expect(resBody.name).to.be.a(\"string\")\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Verify length of ID and save it to collection\", ()=>{\r",
+							"    pm.expect(resBody.id.length).to.greaterThan(10)\r",
+							"    pm.collectionVariables.set(\"idBoard\", resBody.id)\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "dede83f7-7322-473a-b588-ddd062089213",
+						"exec": [
+							"function namegenerator () {\r",
+							"const randomNumber = Math.floor(Math.random() * (100000000 - 1) + 1);\r",
+							"const randomName = \"Sprint\" + randomNumber\r",
+							"pm.collectionVariables.set(\"boardName\", randomName );\r",
+							"}\r",
+							"\r",
+							"namegenerator();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"_postman_id": "609162e0-e82d-4a76-ae6c-ba5369968d32",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/?name={{boardName}}&desc={{desc}}&key={{key}}&token={{token}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						""
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{boardName}}"
+						},
+						{
+							"key": "desc",
+							"value": "{{desc}}"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "token",
+							"value": "{{token}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Auto-delete a board",
+			"_postman_id": "d6912630-aba9-4ef6-a10a-aba4d2541cbf",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/boards/{{idBoard}}?key={{key}}&token={{token}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"boards",
+						"{{idBoard}}"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "token",
+							"value": "{{token}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "143b63dc-7c43-4313-9ad1-28f30029390e",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "2cd67b92-5a53-44dd-b37d-fcd679aa8575",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "3befccdb-0a77-4ffb-be43-86e570488587",
+			"key": "desc",
+			"value": "Projekt oprogramowania@",
+			"type": "string"
+		},
+		{
+			"id": "669b857e-8345-49cb-bf8a-471f7c61af5c",
+			"key": "boardName",
+			"value": "Sprint",
+			"type": "string"
+		},
+		{
+			"id": "5b4457df-feb2-4891-86a9-dcdc11238687",
+			"key": "idBoard",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"id": "3f0799af-fe1b-4a90-ada8-339f2bf24b69",
+			"key": "baseURL",
+			"value": "https://api.trello.com/1",
+			"type": "string"
+		},
+		{
+			"id": "bda11299-a9ad-4872-b8f6-2652e5d05503",
+			"key": "Random name",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
