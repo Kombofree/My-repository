@@ -1,2 +1,2 @@
 # My repo
-Little sample of Postman and Testlink
+Sample of Cypress, Postman and Testlink
